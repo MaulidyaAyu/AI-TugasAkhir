@@ -87,11 +87,12 @@ def main():
         st.subheader('Masukkan Data untuk Prediksi')
 
         # Contoh input untuk data ApplicantIncome, CoapplicantIncome, LoanAmount, Loan_Amount_Term, Credit_History
-        applicant_income = st.number_input('Applicant Income')
-        coapplicant_income = st.number_input('Coapplicant Income')
-        loan_amount = st.number_input('Loan Amount')
-        loan_amount_term = st.number_input('Loan Amount Term')
-        credit_history = st.number_input('Credit History (0 for No, 1 for Yes)')
+        applicant_income = st.number_input('Pendapatan Utama')
+        coapplicant_income = st.number_input('Pendapatan Tambahan')
+        loan_amount = st.number_input('Jumlah Pinjaman yang Diajukan')
+        loan_amount_term = st.selectbox('Jangka Waktu Pinjaman yang Diajukan', options=unique_dates)
+        credit_history = st.selectbox('Apakah Anda Memiliki Riwayat Kredit?', options=unique_dates)
+        
 
         # Prediksi saat tombol ditekan
         if st.button('Predict'):
@@ -102,9 +103,9 @@ def main():
             
             # Tampilkan hasil prediksi
             if prediction[0] == 0:
-                st.write('Hasil Prediksi: Tidak Layak Memiliki Pinjaman')
+                st.write('Hasil Prediksi: Tidak Layak Diberi Pinjaman')
             else:
-                st.write('Hasil Prediksi: Layak Memiliki Pinjaman')
+                st.write('Hasil Prediksi: Layak Diberi Pinjaman')
 
 if __name__ == '__main__':
     main()
