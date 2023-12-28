@@ -35,7 +35,7 @@ def show_data_visualization():
     label_mapping = {'Y': 1, 'N': 0}
 
     # Mengganti nilai kategori dengan nilai numerik menggunakan map
-    data_selected['Loan_Status'] = data_selected['Loan_Status'].map(label_mapping)
+    data_selected['Loan_Status'].map(label_mapping)
 
     # Mengisi missing value pada 'LoanAmount' dengan nilai rata-rata
     mean_loan_amount = data_selected['LoanAmount'].mean()
@@ -49,8 +49,12 @@ def show_data_visualization():
     mode_credit_history = data_selected['Credit_History'].mode()[0]
     data_selected['Credit_History'].fillna(mode_credit_history, inplace=True)
 
+
     # Visualisasi
-    st.title('Visualisasi Data')
+    st.title('Visualisasi Dataset')
+
+    st.write('Preview Dataset')
+    st.write(df.head(10))
     
     st.subheader('Histogram')
     data_selected.hist(figsize=(10, 8))
@@ -75,24 +79,26 @@ def main():
     st.title('Prediksi Status Pinjaman')
 
     # Pilihan untuk visualisasi atau prediksi
-    option = st.sidebar.radio('Pilih', ['Visualisasi Data', 'Prediksi'])
+    option = st.sidebar.radio('Pilih Fitur', ['Visualisasi Dataset', 'Prediksi Peminjam'])
 
-    if option == 'Visualisasi Data':
+    if option == 'Visualisasi Dataset':
         # Tampilkan visualisasi data
         show_data_visualization()
-    elif option == 'Prediksi':
+    elif option == 'Prediksi Peminjam':
         df = pd.read_csv('data_clean.csv')  # Baca kembali DataFrame
         # Judul untuk input data prediksi
-        st.subheader('Masukkan Data untuk Prediksi')
+        st.subheader('Masukkan Data Peminjam')
 
         # Contoh input untuk data ApplicantIncome, CoapplicantIncome, LoanAmount, Loan_Amount_Term, Credit_History
-        applicant_income = st.number_input('Pendapatan Utama')
-        coapplicant_income = st.number_input('Pendapatan Tambahan')
-        loan_amount = st.number_input('Jumlah Pinjaman yang Diajukan')
+        applicant_income = int(st.number_input('Pendapatan Utama Peminjam', format='%d', value=0))
+        coapplicant_income = int(st.number_input('Pendapatan Tambahan Peminjam', format='%d', value=0))
+        loan_amount = int(st.number_input('Jumlah Pinjaman yang Diajukan', format='%d', value=0))
         loan_amount_term_options = df['Loan_Amount_Term'].unique()
         loan_amount_term = st.selectbox('Jangka Waktu Pinjaman yang Diajukan', loan_amount_term_options)
-        credit_history_options = df['Credit_History'].unique()
-        credit_history = st.selectbox('Apakah Anda Memiliki Riwayat Kredit?', credit_history_options)
+        df['Credit_History_Text'] = df['Credit_History'].apply(lambda x: 'Ya' if x == 0 else 'Tidak')
+        credit_history_options = df['Credit_History_Text'].unique()
+        credit_history = st.selectbox('Apakah Peminjam Memiliki Riwayat Kredit yang Buruk?', credit_history_options)
+
 
         # Prediksi saat tombol ditekan
         if st.button('Predict'):
@@ -103,9 +109,9 @@ def main():
             
             # Tampilkan hasil prediksi
             if prediction[0] == 0:
-                st.write('Hasil Prediksi: Tidak Layak Diberi Pinjaman')
+                st.write('Hasil Prediksi: Peminjam Tidak Layak Diberi Pinjaman')
             else:
-                st.write('Hasil Prediksi: Layak Diberi Pinjaman')
+                st.write('Hasil Prediksi: Peminjam Layak Diberi Pinjaman')
 
 if __name__ == '__main__':
     main()
