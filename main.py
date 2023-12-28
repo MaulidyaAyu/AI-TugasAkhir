@@ -25,13 +25,11 @@ def predict_loan_status(model, input_data):
 
 # Fungsi untuk menampilkan visualisasi data
 def show_data_visualization():
-    data = pd.read_csv('loadPredictionAsli.csv')
+    df = pd.read_csv('data_clean.csv')
 
     # Memilih kolom-kolom yang diinginkan
     selected_columns = ['ApplicantIncome', 'CoapplicantIncome', 'LoanAmount', 'Loan_Amount_Term', 'Credit_History', 'Loan_Status']
-
-    # Menggunakan metode loc untuk memilih kolom yang diinginkan
-    data_selected = data.loc[:, selected_columns]
+    data_selected = df[selected_columns]
 
     # Mendefinisikan pemetaan label ke nilai numerik
     label_mapping = {'Y': 1, 'N': 0}
@@ -67,7 +65,7 @@ def show_data_visualization():
 
     st.subheader('Count Plot Status Pinjaman')
     plt.figure(figsize=(8, 6))
-    sns.countplot(x='Loan_Status', data=data_selected)
+    sns.countplot(x='Loan_Status', data=df)
     st.pyplot()
 
 def main():
@@ -82,7 +80,8 @@ def main():
     if option == 'Visualisasi Data':
         # Tampilkan visualisasi data
         show_data_visualization()
-    else:
+    elif option == 'Prediksi':
+        df = pd.read_csv('data_clean.csv')  # Baca kembali DataFrame
         # Judul untuk input data prediksi
         st.subheader('Masukkan Data untuk Prediksi')
 
@@ -90,9 +89,10 @@ def main():
         applicant_income = st.number_input('Pendapatan Utama')
         coapplicant_income = st.number_input('Pendapatan Tambahan')
         loan_amount = st.number_input('Jumlah Pinjaman yang Diajukan')
-        loan_amount_term = st.selectbox('Jangka Waktu Pinjaman yang Diajukan', options=unique_dates)
-        credit_history = st.selectbox('Apakah Anda Memiliki Riwayat Kredit?', options=unique_dates)
-        
+        loan_amount_term_options = df['Loan_Amount_Term'].unique()
+        loan_amount_term = st.selectbox('Jangka Waktu Pinjaman yang Diajukan', loan_amount_term_options)
+        credit_history_options = df['Credit_History'].unique()
+        credit_history = st.selectbox('Apakah Anda Memiliki Riwayat Kredit?', credit_history_options)
 
         # Prediksi saat tombol ditekan
         if st.button('Predict'):
